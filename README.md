@@ -1,5 +1,9 @@
 # KNOT Boundary Field Lab V9.1.1
 
+## Live demo
+
+https://DraganaMitova.github.io/knot-boundary-field-lab/
+
 Open `index.html` in a modern browser.
 
 ## Browser workflow
