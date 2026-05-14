@@ -1,4 +1,4 @@
-# KNOT Boundary Field Lab V9.1.1 — Simulation Spec
+# KNOT Boundary Field Lab — Simulation Spec
 
 ## Scope
 

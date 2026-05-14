@@ -47,7 +47,7 @@ test('theme toggle and pause autosave expose state', async ({ page }) => {
 test('exported JSON is valid and includes field arrays', async ({ page }) => {
   await page.goto(appUrl);
   const state = await page.evaluate(() => serializeState());
-  expect(state.version).toBe('V9.1.1');
+  expect(state.version).toBe('Production');
   expect(state.field.u.length).toBe(state.resolution * state.resolution);
   expect(state.integrity.trajectoryLiveLimit).toBe(100);
   expect(state.integrity.trajectoryArchiveLimit).toBe(50);

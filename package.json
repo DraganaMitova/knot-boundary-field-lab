@@ -1,6 +1,6 @@
 {
-  "name": "knot-boundary-field-lab-v9-1",
-  "version": "9.1.1",
+  "name": "knot-boundary-field-lab",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
