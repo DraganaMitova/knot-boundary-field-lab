@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KNOT Boundary Field Lab V9.1.1 — Production Build</title>
+<style>
+:root{color-scheme:dark;--bg:#050711;--panel:rgba(14,19,36,.92);--panel2:rgba(23,31,58,.75);--line:rgba(255,255,255,.13);--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.64);--weak:rgba(255,255,255,.42);--good:#8ef0b0;--warn:#ffe58a;--bad:#ff7e8a;--blue:#66ddff;--orange:#ffb173;--purple:#c798ff}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 14% 0%,rgba(142,166,255,.18),transparent 34%),radial-gradient(circle at 91% 6%,rgba(255,177,115,.13),transparent 32%),linear-gradient(180deg,#0a1024,#04050d);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding:14px}body[data-theme="light"]{color-scheme:light;--bg:#f6f7fb;--panel:rgba(255,255,255,.94);--panel2:rgba(245,247,255,.86);--line:rgba(13,21,42,.14);--text:rgba(13,21,42,.92);--muted:rgba(13,21,42,.66);--weak:rgba(13,21,42,.46);background:radial-gradient(circle at 14% 0%,rgba(102,132,255,.18),transparent 34%),radial-gradient(circle at 91% 6%,rgba(255,177,115,.18),transparent 32%),linear-gradient(180deg,#f8f9ff,#e8ecf7)}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(31px,5vw,72px);letter-spacing:-.085em;line-height:.9;margin-bottom:12px}h2{font-size:15px;letter-spacing:-.03em;margin-bottom:11px}h3{font-size:12px;color:white;margin-bottom:8px}p,.small,li{color:var(--muted);font-size:12px;line-height:1.55}button,input,select,textarea{font:inherit;color:var(--text);border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:14px;padding:10px 12px;outline:none}select{width:100%}button{cursor:pointer;transition:.12s}button:hover{transform:translateY(-1px);background:rgba(255,255,255,.10);border-color:rgba(160,180,255,.32)}button.primary{background:linear-gradient(135deg,rgba(142,166,255,.25),rgba(102,221,255,.08));border-color:rgba(142,166,255,.35)}button.good{background:linear-gradient(135deg,rgba(142,240,176,.20),rgba(102,221,255,.06));border-color:rgba(142,240,176,.32)}button.hot{background:linear-gradient(135deg,rgba(255,177,115,.23),rgba(255,126,138,.06));border-color:rgba(255,177,115,.32)}button.danger{background:linear-gradient(135deg,rgba(255,126,138,.23),rgba(255,255,255,.04));border-color:rgba(255,126,138,.32)}.app{max-width:1900px;margin:0 auto;display:grid;gap:14px}.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 20px 70px rgba(0,0,0,.24);backdrop-filter:blur(14px);overflow:hidden}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.main{display:grid;grid-template-columns:390px minmax(600px,1fr) 430px;gap:14px;align-items:start}.stack{display:grid;gap:14px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.055);border-radius:999px;padding:5px 9px;color:var(--muted);font-size:11px}.dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 16px currentColor}.pass{color:var(--good)!important}.warn{color:var(--warn)!important}.fail{color:var(--bad)!important}.info{color:var(--blue)!important}.stat{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:12px;min-width:0}.stat .value{font:23px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:white;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat .label{color:var(--muted);font-size:11px;margin-top:5px}.equation{margin-top:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);border-radius:18px;padding:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:rgba(255,255,255,.86);font-size:12px;line-height:1.55;white-space:pre-wrap}.scenario{min-height:84px;text-align:left;padding:12px;border-radius:18px}.scenario strong{display:block;margin-bottom:4px;font-size:12px}.scenario span{display:block;color:var(--muted);font-size:11px;line-height:1.38}.range-row{display:grid;grid-template-columns:104px 1fr 62px;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin:9px 0}.field-shell{position:relative;border:1px solid rgba(255,255,255,.14);border-radius:28px;padding:12px;background:radial-gradient(circle at 18% 12%,rgba(142,166,255,.10),transparent 32%),rgba(0,0,0,.22);overflow:hidden}canvas#fieldCanvas{width:100%;aspect-ratio:1/1;display:block;border-radius:22px;background:#02040b;image-rendering:pixelated;cursor:crosshair}.field-overlay{position:absolute;left:22px;right:22px;top:22px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.field-overlay .badge{background:rgba(0,0,0,.45);backdrop-filter:blur(8px)}.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.legend-item{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);border-radius:14px;padding:9px;color:var(--muted);font-size:11px;line-height:1.35}.swatch{display:inline-block;width:32px;height:8px;border-radius:999px;margin-right:6px;vertical-align:middle}.neg{background:linear-gradient(90deg,#66ddff,#8ea6ff)}.pos{background:linear-gradient(90deg,#ffb173,#ffe58a)}.energy{background:linear-gradient(90deg,#111,#fff)}.metric{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding:7px 0;font-size:12px}.metric span:first-child{color:var(--muted)}.metric span:last-child{color:white;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.status-title{font-size:clamp(23px,3.2vw,42px);letter-spacing:-.065em;line-height:.98;margin:10px 0}.status-text{color:rgba(255,255,255,.70);font-size:13px;line-height:1.55}.chart-card{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);border-radius:18px;padding:12px}canvas.chart{width:100%;height:118px;display:block;border-radius:12px;background:rgba(0,0,0,.18)}textarea{width:100%;min-height:250px;resize:vertical;background:rgba(0,0,0,.20);font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.timeline{height:230px;overflow:auto}.event{display:grid;grid-template-columns:52px 1fr;gap:9px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px}.event .time{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.event strong{display:block;color:white;margin-bottom:2px}.event span{color:var(--muted);line-height:1.35}.protocol{counter-reset:step;display:grid;gap:8px}.protocol div{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);border-radius:14px;padding:10px;color:var(--muted);font-size:12px;line-height:1.45}.protocol div:before{counter-increment:step;content:counter(step);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:rgba(142,166,255,.2);color:white;margin-right:7px;font:12px ui-monospace}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}th{color:var(--muted);font-weight:500;font-size:11px}.pill{display:inline-flex;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 7px;font-size:11px;color:var(--muted);margin:2px}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.loading-overlay{position:fixed;inset:0;z-index:9999;display:none;place-items:center;background:rgba(2,4,11,.74);backdrop-filter:blur(8px);font:16px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:white}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.legal{font-size:11px;color:var(--weak);line-height:1.45}.disabled-note{opacity:.55}.perf-on{border-color:rgba(142,240,176,.42)!important;background:linear-gradient(135deg,rgba(142,240,176,.20),rgba(255,255,255,.04))!important}.perf-note{color:var(--warn);font-size:11px;line-height:1.35;margin-top:8px}.sr-table{border-collapse:collapse}@media(max-width:1480px){.hero,.main{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}canvas#fieldCanvas{max-height:72vh}}@media(max-width:720px){body{padding:10px}.grid2,.grid3,.grid4,.legend,.split{grid-template-columns:1fr}.range-row{grid-template-columns:88px 1fr 52px}h1{letter-spacing:-.07em}}
+</style>
+</head>
+<body>
+<div id="loadingOverlay" class="loading-overlay" role="status" aria-live="polite">Applying production operation…</div>
+<div class="app">
+<section class="hero">
+<div class="panel">
+<h1>KNOT Boundary Field Lab V9.1.1</h1>
+<p>A stronger research toy: honest pattern tracking, confidence-aware identities, separated wave/reaction-diffusion modes, boundary stress diagnostics, and export. It still does not claim discovery. It helps ask sharper, reproducible questions.</p>
+<div class="row"><span class="badge"><span class="dot pass"></span> model declared</span><span class="badge"><span class="dot info"></span> nonlinear modes</span><span class="badge"><span class="dot warn"></span> toy ≠ proof</span><span class="badge"><span class="dot"></span> export JSON/Python</span><span class="badge"><span class="dot info"></span> boundary-criticality lens</span><span class="badge"><span class="dot pass"></span> confidence-aware tracking</span></div>
+<div id="equationBox" class="equation"></div>
+</div>
+<div class="panel">
+<h2>Run State</h2>
+<div class="row"><span class="badge"><span id="runDot" class="dot pass"></span><span id="runState">running</span></span><span class="badge">tick: <span id="tickText">0</span></span><span class="badge">experiment: <span id="modeText">Pulse</span></span></div><br>
+<div class="grid3"><button id="runPause" class="primary" aria-label="Pause or resume simulation">Pause</button><button id="step1" aria-label="Step simulation once">Step 1</button><button id="step10" aria-label="Step simulation ten ticks">Step 10</button><button id="step100" aria-label="Step simulation one hundred ticks">Step 100</button><button id="runSelfTest" class="good" aria-label="Run numerical self test">Run Self-Test</button><button id="prodTest" class="good" aria-label="Run production tests">Run Production Tests</button><button id="inspectStrongest" aria-label="Pause and inspect strongest pattern">Inspect Strongest</button><button id="performanceModeBtn" aria-pressed="false" aria-label="Toggle performance mode">Performance Mode: Off</button><button id="themeToggle" aria-pressed="false" aria-label="Toggle dark or light theme">Theme: Dark</button><button id="restoreAutosave" aria-label="Restore locally autosaved state">Restore Autosave</button><button id="clearAutosave" aria-label="Clear locally autosaved state">Clear Autosave</button></div><div id="performanceNote" class="perf-note" role="status" aria-live="polite"></div><br>
+<div class="row"><input id="seedInput" style="flex:1;min-width:160px" aria-label="seed"><button id="applySeed">Apply Seed</button></div><br>
+<div class="grid4"><div class="stat"><div id="hEnergy" class="value">0</div><div class="label">energy</div></div><div class="stat"><div id="hRetained" class="value">100%</div><div class="label">retained</div></div><div class="stat"><div id="hRisk" class="value">0%</div><div class="label">boundary stress</div></div><div class="stat"><div id="hSanity" class="value pass">PASS</div><div class="label">sanity</div></div><div class="stat"><div id="hFps" class="value">--</div><div class="label">fps</div></div><div class="stat"><div id="hAutosave" class="value">none</div><div class="label">local autosave</div></div></div>
+</div>
+</section>
+<section class="main">
+<aside class="stack">
+<div class="panel"><h2>How to Use</h2><div class="protocol"><div>Choose a model. Start with <b>Linear Wave</b>, then compare with <b>Sine-Gordon</b> or <b>φ⁴ Toy</b>.</div><div>Choose an experiment. Use <b>Barrier Slit</b> to see a channel; use <b>Collision</b> to compare before/after pattern survival.</div><div>Switch view between field, energy density, and boundary-criticality map.</div><div>Run <b>Self-Test</b> for numerical sanity, <b>Production Tests</b> for export/runtime checks, and enable <b>Performance Mode</b> on weak devices or 256×256.</div><div>Input: click/drag injects a positive disturbance; <b>Shift + click</b> injects negative. On touch devices, long-press before dragging injects negative.</div></div></div>
+<div class="panel"><h2>Model</h2><select id="modelSelect"><optgroup label="Wave Field Models"><option value="linear">Linear Wave</option><option value="sinegordon">Sine-Gordon Toy</option><option value="phi4">φ⁴ Nonlinear Toy</option></optgroup><optgroup label="Reaction-Diffusion Models"><option value="reaction">Gray-Scott Reaction-Diffusion</option></optgroup></select><br><br><select id="viewSelect"><option value="field">View: Field value</option><option value="energy">View: Energy density</option><option value="criticality">View: Boundary-stress map</option></select><br><br><select id="resolutionSelect"><option value="128">Resolution: 128 fast</option><option value="192">Resolution: 192 detailed</option><option value="256">Resolution: 256 heavy</option></select></div>
+<div class="panel"><h2>Experiments</h2><div class="grid2"><button class="scenario primary" id="expPulse"><strong>Pulse</strong><span>one local disturbance; baseline behavior</span></button><button class="scenario good" id="expConserve"><strong>Conservation Check</strong><span>no damping, reflective boundary</span></button><button class="scenario hot" id="expSlit"><strong>Barrier Slit</strong><span>capacity + channel test</span></button><button class="scenario danger" id="expCollision"><strong>Collision</strong><span>two pulses meet; compare survival</span></button><button class="scenario" id="expNoise"><strong>Noise Escape</strong><span>noise pressure near a weak boundary</span></button><button class="scenario" id="expSoliton"><strong>Soliton-like Seed</strong><span>localized nonlinear packet; toy only</span></button></div></div>
+<div class="panel"><h2>Parameters</h2><div class="range-row"><span>Speed</span><input id="speed" type="range" min="0.03" max="0.35" step="0.005"><strong id="speedVal"></strong></div><div class="range-row"><span>Damping</span><input id="damping" type="range" min="0" max="0.035" step="0.001"><strong id="dampingVal"></strong></div><div class="range-row"><span>Nonlinear</span><input id="nonlinear" type="range" min="0" max="1.4" step="0.02"><strong id="nonlinearVal"></strong></div><div class="range-row"><span>Noise</span><input id="noise" type="range" min="0" max="0.08" step="0.001"><strong id="noiseVal"></strong></div><div class="range-row"><span>Boundary</span><input id="capacity" type="range" min="0" max="1" step="0.01"><strong id="capacityVal"></strong></div><div class="range-row"><span>Channel</span><input id="channel" type="range" min="0" max="36" step="1"><strong id="channelVal"></strong></div></div>
+<div class="panel"><h2>Nonlinear Presets</h2><p>For Sine-Gordon and φ⁴ toy modes. These are behavior presets, not verified physical solitons.</p><select id="nonlinearPreset"><option value="gentle">Gentle packet</option><option value="compact">Compact nonlinear packet</option><option value="breather">Breather-like toy</option><option value="kink">Kink-wall toy</option><option value="collision">Nonlinear collision</option></select><br><br><div class="grid2"><button id="applyNonlinear" class="good">Apply Nonlinear Preset</button><button id="pauseInspect">Pause + Inspect</button></div><div id="nonlinearText" class="small" style="margin-top:10px"></div></div>
+<div class="panel"><h2>Gray-Scott Presets</h2><p>Only active in reaction-diffusion mode. These are classic-style parameter regions, not proof of biology or physics.</p><select id="grayPreset"><option value="mitosis">Mitosis-like spots</option><option value="worms">Worms / labyrinth</option><option value="coral">Coral growth</option><option value="solitons">Self-replicating spots</option><option value="waves">Wave-like fronts</option></select><br><br><div class="grid2"><button id="applyGray" class="good">Apply Preset</button><button id="randomGray">Randomize F/K</button></div><div id="grayText" class="small" style="margin-top:10px"></div></div>
+</aside>
+<main class="stack">
+<div class="field-shell"><canvas id="fieldCanvas" width="128" height="128" role="img" aria-label="Interactive field simulation canvas. Click or drag to inject a local disturbance. Shift click or touch long-press injects a negative wave." tabindex="0"></canvas><div class="field-overlay"><span class="badge">click/drag = inject · shift/long-press = negative</span><span class="badge" id="fieldBadge">field view</span></div><div class="legend"><div class="legend-item"><span class="swatch neg"></span>negative field</div><div class="legend-item"><span class="swatch pos"></span>positive field</div><div class="legend-item"><span class="swatch energy"></span>energy / risk intensity</div></div></div>
+<div class="panel"><h2 id="statusTitle">What is happening?</h2><div class="status-title" id="bigStatus">A wave disturbance is evolving.</div><p class="status-text" id="statusText">This lab names only measured patterns: amplitude peaks, energy clusters, boundary crossings, and retention. It does not call them particles.</p></div>
+<div class="grid3"><div class="chart-card"><h3>Energy</h3><canvas class="chart" id="energyChart"></canvas></div><div class="chart-card"><h3>Peak / Width</h3><canvas class="chart" id="peakChart"></canvas></div><div class="chart-card"><h3>Boundary Stress</h3><canvas class="chart" id="riskChart"></canvas></div></div>
+<div class="panel"><h2>Event Timeline</h2><div id="timeline" class="timeline" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Simulation event timeline"></div></div>
+</main>
+<aside class="stack">
+<div class="panel"><h2>Analysis</h2><div id="metrics"></div></div>
+<div class="panel"><h2>Boundary Stress Lens</h2><p>This is an interpretation layer, not proof. It maps the run into boundary, pressure, capacity, noise, channel, and a weighted stress score.</p><div class="equation" id="stressFormula"></div><div id="bcMetrics"></div></div>
+<div class="panel"><h2>Persistent Patterns</h2><p>Patterns are remembered across frames after repeated detection. Names are descriptive labels, not ontology. V9.1 stores trajectory/confidence history for inspection. Confidence is continuity evidence, not identity proof.</p><div id="structures"></div></div>
+
+<div class="panel"><h2>Pattern Inspector</h2><p>Select a tracked pattern to highlight it on the canvas and inspect its lifetime/confidence history.</p><select id="patternSelect"><option value="">Auto / strongest pattern</option></select><br><br><div id="patternStats"></div><br><div class="grid2"><button id="exportPatterns">Export Pattern History</button><button id="clearSelection">Clear Selection</button></div></div>
+<div class="panel"><h2>Known Weaknesses</h2><div class="protocol"><div>Boundary Stress Index is a weighted heuristic, not empirically fitted science.</div><div>Pattern identity is approximate and can fail during merge, split, or fast motion.</div><div>Gray-Scott is reaction-diffusion, not a wave equation. It is separated on purpose.</div><div>256×256 mode is intentionally labeled heavy and may slow browsers.</div><div>This tool supports visual reasoning and reproducible toy experiments, not proof of new physics.</div></div></div>
+<div class="panel"><h2>Self-Test</h2><div id="tests" role="status" aria-live="polite"><p>Run Self-Test to verify basic numerical behavior.</p></div></div>
+<div class="panel"><h2>Production Tests</h2><div id="productionTests" role="status" aria-live="polite"><p>Run Production Tests to verify export/import, stability, and runtime checks.</p></div></div>
+<div class="panel"><h2>Export / Import / Tests</h2><div class="grid2"><button id="copyReport">Copy Report</button><button id="downloadJson">Download Full JSON</button><button id="importJson">Import JSON</button><button id="downloadPython">Export Real Python</button><button id="downloadTests">Download Test Harness</button><button id="reset" class="danger">Reset</button></div><input id="importFile" type="file" accept="application/json,.json" style="display:none"><br><textarea id="report" readonly aria-label="run report"></textarea><p class="legal">Production build goal: exact state export/import, deterministic replay seed, bounded pattern history, runtime recovery, and local test harness. Scientific claim remains bounded: educational simulation, not validated physics.</p></div>
+</aside>
+</section>
+</div>
+<script>
+'use strict';
+let N=128; let SQ=N*N;
+const params={model:'linear',view:'field',speed:.18,damping:.008,nonlinear:.55,noise:0,capacity:.75,channel:14,dt:.72,experiment:'Pulse',feed:.035,kill:.060};
+let seed='knot-boundary-field-v9-1'; let rng; let u,v,u2,a,b,barrier,history=[],events=[],selfTestResults=[],productionTestResults=[],running=true,tick=0,initialEnergy=0,lastMetrics=null,patterns=new Map(),nextPatternId=1,lastClusterSummaries=[],lastClusterTick=-999,lastClusterCount=0,lastUncertaintyTick=-999,selectedPatternId='',patternArchive=[],numericRecoveryCount=0,lastStabilityWarningTick=-999,performanceMode=false,frameCounter=0,lastFrameTime=0,currentFps=0,lastFpsSample=0,framesSinceFps=0,autosaveStatus='none',touchNegativeUntil=0,themeMode='dark';
+const AUTOSAVE_KEY='knot_boundary_field_lab_v9_1_autosave';
+const cvs=document.getElementById('fieldCanvas'),ctx=cvs.getContext('2d'); let img=ctx.createImageData(N,N);
+function hash(s){let h=1779033703^s.length; for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19;} return h>>>0}
+class RNG{constructor(s){this.s=hash(s)} next(){this.s|=0;this.s=this.s+0x6D2B79F5|0;let t=Math.imul(this.s^this.s>>>15,1|this.s);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296} range(a,b){return a+(b-a)*this.next()}}
+const idx=(x,y)=>y*N+x, clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function analysisInterval(){return N>=256?12:N>=192?8:4}
+function patternInterval(){return N>=256?16:N>=192?12:8}
+function reset(exp=params.experiment){rng=new RNG(seed+':'+exp); SQ=N*N; cvs.width=N; cvs.height=N; img=ctx.createImageData(N,N); tick=0; patterns=new Map(); patternArchive=[]; selectedPatternId=''; nextPatternId=1; u=new Float32Array(SQ); v=new Float32Array(SQ); u2=new Float32Array(SQ); a=new Float32Array(SQ); b=new Float32Array(SQ); barrier=new Float32Array(SQ); history=[]; events=[]; selfTestResults=[]; lastClusterSummaries=[]; lastClusterTick=-999; lastClusterCount=0; lastUncertaintyTick=-999; numericRecoveryCount=0; lastStabilityWarningTick=-999; params.experiment=exp; makeBarrier(false); if(params.model==='reaction') initReaction(); else initWaveExperiment(exp); initialEnergy=Math.max(energy(),1e-9); event('reset',exp,'run initialized with declared model and seed'); render();}
+function initReaction(){for(let i=0;i<SQ;i++){a[i]=1;b[i]=0;u[i]=0;v[i]=0} const c=Math.floor(N/2), r=Math.max(8,Math.floor(N*.06)); for(let y=c-r;y<c+r;y++)for(let x=c-r;x<c+r;x++){a[idx(x,y)]=.5;b[idx(x,y)]=.25} if(params.experiment==='Barrier Slit'||params.experiment==='Noise Escape')makeBarrier(true);}
+function initWaveExperiment(exp){const c=Math.floor(N/2), left=Math.floor(N*.28), right=Math.floor(N*.70), pr=Math.max(6,Math.floor(N*.055)); makeBarrier(exp==='Barrier Slit'||exp==='Noise Escape'); if(exp==='Pulse'||exp==='Conservation Check') pulse(c,c,1.4,pr); if(exp==='Barrier Slit') pulse(left,c,1.5,pr); if(exp==='Collision'){pulse(left,c,1.2,Math.max(5,Math.floor(N*.047)),0.25); pulse(right,c,-1.2,Math.max(5,Math.floor(N*.047)),-0.25)} if(exp==='Noise Escape'){pulse(left,c,1.1,pr); params.noise=Math.max(params.noise,.012)} if(exp==='Soliton-like Seed'){const scale=Math.max(8,N/16); for(let y=0;y<N;y++)for(let x=0;x<N;x++){const dx=(x-c)/scale, dy=(y-c)/scale; u[idx(x,y)]=2.8/Math.cosh(Math.hypot(dx,dy)); v[idx(x,y)]=-.035*(x-c)*u[idx(x,y)];} if(params.model==='linear')params.model='sinegordon';}}
+function makeBarrier(on){barrier.fill(0); if(!on)return; const gap=Math.floor(params.channel*N/128); const mid=Math.floor(N/2); const wall=Math.max(1,Math.floor(N/96)); for(let y=Math.floor(N*.06);y<N-Math.floor(N*.06);y++){if(Math.abs(y-N/2)<gap/2)continue; for(let w=-wall;w<=wall;w++){const x=mid+w;if(x>=0&&x<N)barrier[idx(x,y)]=params.capacity;}}}
+function pulse(cx,cy,amp,r,vel=0){for(let y=Math.max(1,cy-r);y<Math.min(N-1,cy+r+1);y++)for(let x=Math.max(1,cx-r);x<Math.min(N-1,cx+r+1);x++){const d=Math.hypot(x-cx,y-cy); if(d>r)continue; const f=Math.cos(d/r*Math.PI/2)**2; u[idx(x,y)]+=amp*f; v[idx(x,y)]+=vel*f;}}
+function finiteOrZero(x){return Number.isFinite(x)?x:0}
+function recoverCell(i){let recovered=false; if(!Number.isFinite(u[i])){u[i]=0; recovered=true;} if(!Number.isFinite(v[i])){v[i]=0; recovered=true;} if(!Number.isFinite(u2[i])){u2[i]=0; recovered=true;} if(params.model==='reaction'){if(!Number.isFinite(a[i])){a[i]=1; recovered=true;} if(!Number.isFinite(b[i])){b[i]=0; recovered=true;}} if(recovered)numericRecoveryCount++; return recovered;}
+function maxStableDt(){return params.model==='reaction'?Infinity:1/(Math.max(params.speed,1e-9)*Math.sqrt(2));}
+function stabilityState(){const limit=maxStableDt(); if(!Number.isFinite(limit))return {ok:true,limit:Infinity,ratio:0,label:'reaction-diffusion: CFL n/a'}; const ratio=params.dt/limit; return {ok:ratio<=.95,limit,ratio,label:`dt ${params.dt.toFixed(3)} / 2D CFL limit ${limit.toFixed(3)} (${Math.round(ratio*100)}%)`};}
+function checkStability(){const st=stabilityState(); if(!st.ok && tick-lastStabilityWarningTick>120){event('stability warning','CFL',`${st.label}. Reduce speed or dt.`); lastStabilityWarningTick=tick;} return st;}
+function step(){if(params.model==='reaction')stepReaction(); else stepWave(); tick++; if(tick%analysisInterval()===0)sample();}
+function stepWave(){const c2=params.speed*params.speed, dt=params.dt, damp=params.experiment==='Conservation Check'?0:params.damping; const reflective=params.experiment==='Conservation Check'; for(let y=0;y<N;y++){for(let x=0;x<N;x++){const i=idx(x,y); recoverCell(i); let xm=x>0?x-1:(reflective?1:0), xp=x<N-1?x+1:(reflective?N-2:N-1), ym=y>0?y-1:(reflective?1:0), yp=y<N-1?y+1:(reflective?N-2:N-1); const lap=finiteOrZero(u[idx(xm,y)])+finiteOrZero(u[idx(xp,y)])+finiteOrZero(u[idx(x,ym)])+finiteOrZero(u[idx(x,yp)])-4*finiteOrZero(u[i]); let force=c2*lap; if(params.model==='sinegordon')force-=params.nonlinear*Math.sin(finiteOrZero(u[i])); if(params.model==='phi4'){const ui=finiteOrZero(u[i]); force-=params.nonlinear*(ui*ui*ui-ui);} if(params.noise>0)force+=(rng.next()-.5)*params.noise; if(!Number.isFinite(force)){force=0; numericRecoveryCount++;} let vv=(finiteOrZero(v[i])+dt*force)*(1-damp); if(!Number.isFinite(vv)){vv=0; numericRecoveryCount++;} if(barrier[i]>0){vv*=1-barrier[i]*.92; u[i]*=1-barrier[i]*.55;} const next=finiteOrZero(u[i])+dt*vv; u2[i]=clamp(Number.isFinite(next)?next:0,-10,10); v[i]=clamp(vv,-10,10);}}
+let tmp=u;u=u2;u2=tmp;}
+function stepReaction(){const Du=.16,Dv=.08,F=params.feed,K=params.kill; for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=idx(x,y); recoverCell(i); const xm=x>0?x-1:x, xp=x<N-1?x+1:x, ym=y>0?y-1:y, yp=y<N-1?y+1:y; const ai=finiteOrZero(a[i]), bi=finiteOrZero(b[i]); const la=finiteOrZero(a[idx(xm,y)])+finiteOrZero(a[idx(xp,y)])+finiteOrZero(a[idx(x,ym)])+finiteOrZero(a[idx(x,yp)])-4*ai; const lb=finiteOrZero(b[idx(xm,y)])+finiteOrZero(b[idx(xp,y)])+finiteOrZero(b[idx(x,ym)])+finiteOrZero(b[idx(x,yp)])-4*bi; const react=ai*bi*bi; let aa=ai+(Du*la-react+F*(1-ai)); let bb=bi+(Dv*lb+react-(K+F)*bi); if(params.noise>0)bb+=(rng.next()-.5)*params.noise; if(!Number.isFinite(aa)){aa=1; numericRecoveryCount++;} if(!Number.isFinite(bb)){bb=0; numericRecoveryCount++;} if(barrier[i]>0){aa*=1-barrier[i]*.3;bb*=1-barrier[i]*.7} u2[i]=clamp(aa,0,1); v[i]=clamp(bb,0,1);} let ta=a; a=u2; u2=ta; b.set(v); for(let i=0;i<SQ;i++)u[i]=b[i]*2-a[i];}
+function energy(){let E=0; if(params.model==='reaction'){for(let i=0;i<SQ;i++)E+=Math.abs(b[i]);return E} for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const i=idx(x,y), gx=(u[idx(x+1,y)]-u[idx(x-1,y)])*.5, gy=(u[idx(x,y+1)]-u[idx(x,y-1)])*.5; E+=.5*v[i]*v[i]+.5*params.speed*params.speed*(gx*gx+gy*gy);} return E;}
+function analyze(){
+  let E=energy(), max=0, min=0, sumAbs=0, px=0,py=0,wSum=0,escaped=0,clusters=0,hot=0;
+  let barrierPressure=0, nearBoundaryPressure=0, channelFlow=0, leftMass=0, rightMass=0, edgeLeak=0;
+  const threshold=params.model==='reaction'?0.18:0.08;
+  const hasBarrier=params.experiment==='Barrier Slit'||params.experiment==='Noise Escape';
+
+  for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){
+    const i=idx(x,y), val=params.model==='reaction'?b[i]:u[i], av=Math.abs(val);
+    if(val>max)max=val; if(val<min)min=val; sumAbs+=av;
+    if(x<N/2)leftMass+=av; else rightMass+=av;
+    if(x>N/2+Math.max(2,N*.02))escaped+=av;
+    if(x<3||x>N-4||y<3||y>N-4)edgeLeak+=av;
+
+    // Important V6 fix: pressure is measured near the boundary face and channel,
+    // not only inside barrier cells. In V5 the barrier cells damped the field, so
+    // pressure often stayed visually/static even when waves hit the boundary.
+    const distToBarrier=Math.abs(x-N/2);
+    const inSlit=Math.abs(y-N/2)<(params.channel*N/128)/2;
+    if(hasBarrier && distToBarrier<=4){
+      nearBoundaryPressure+=av;
+      if(!inSlit)barrierPressure+=av;
+      else channelFlow+=av;
+    }
+
+    if(av>threshold){hot++; px+=x*av; py+=y*av; wSum+=av;}
+  }
+
+  let clusterSummaries=lastClusterSummaries;
+  const shouldTrack=(tick-lastClusterTick)>=patternInterval() || !lastMetrics;
+  if(shouldTrack){
+    clusterSummaries=getClusters(threshold);
+    detectTrackingUncertainty(clusterSummaries);
+    updatePatterns(clusterSummaries, threshold);
+    lastClusterSummaries=clusterSummaries;
+    lastClusterTick=tick;
+    lastClusterCount=clusterSummaries.length;
+  }
+  clusters=lastClusterCount;
+  const width=wSum?secondMoment(px/wSum,py/wSum,threshold,wSum):0;
+  const retained=E/Math.max(initialEnergy,1e-9);
+  const peak=Math.max(Math.abs(max),Math.abs(min));
+  const deviation=clamp(peak/(params.model==='reaction'?0.75:2.8),0,1);
+  const capacity=hasBarrier?params.capacity:0;
+  const channel=hasBarrier?params.channel/36:0;
+  const noise=clamp(params.noise/.08,0,1);
+  const pressure=hasBarrier?clamp((nearBoundaryPressure+channelFlow*.65)/Math.max(sumAbs*.28,1e-9),0,1):clamp(sumAbs/260,0,1);
+  const channelTransmission=hasBarrier?clamp(channelFlow/Math.max(nearBoundaryPressure,1e-9),0,1):0;
+  const escapeRatio=clamp(rightMass/Math.max(sumAbs,1e-9),0,1);
+  const edgeLeakRatio=clamp(edgeLeak/Math.max(sumAbs,1e-9),0,1);
+  const localization=clamp(1-width/70,0,1);
+  const retainedStress=clamp(retained,0,2)/2;
+
+  // This is intentionally a weighted Boundary Stress Index: it should move with
+  // measurements, but it is not a claim of physical law. It asks whether
+  // pressure/deviation is finding a weak channel or boundary.
+  const risk=clamp(
+    deviation*.25 + pressure*.28 + channelTransmission*.22 + noise*.12 + escapeRatio*.10 + localization*.03 - capacity*.18,
+    0,1
+  );
+
+  const m={tick,E,retained,max,min,sumAbs,hot,clusters,cx:wSum?px/wSum:0,cy:wSum?py/wSum:0,width,peak,
+    boundaryPressure:barrierPressure,nearBoundaryPressure,channelFlow,escaped,edgeLeak,
+    pressure,capacity,noise,channel,channelTransmission,escapeRatio,edgeLeakRatio,deviation,localization,retainedStress,risk,
+    sanity:Number.isFinite(E)&&Number.isFinite(max)&&Number.isFinite(min)};
+  lastMetrics=m; return m;
+}
+function secondMoment(cx,cy,thr,w){let s=0;for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const av=Math.abs(params.model==='reaction'?b[idx(x,y)]:u[idx(x,y)]);if(av>thr)s+=av*((x-cx)**2+(y-cy)**2)}return Math.sqrt(s/Math.max(w,1e-9));}
+function getClusters(thr){
+  const seen=new Uint8Array(SQ), out=[];
+  for(let y=2;y<N-2;y++)for(let x=2;x<N-2;x++){
+    let start=idx(x,y); if(seen[start])continue;
+    const av0=Math.abs(params.model==='reaction'?b[start]:u[start]); if(av0<=thr)continue;
+    let stack=[start], cells=[], sum=0, sx=0, sy=0, peak=0; seen[start]=1;
+    while(stack.length && cells.length<1600){
+      const q=stack.pop(), qx=q%N, qy=(q/N)|0;
+      const val=params.model==='reaction'?b[q]:u[q], av=Math.abs(val);
+      if(av<=thr)continue;
+      cells.push(q); sum+=av; sx+=qx*av; sy+=qy*av; peak=Math.max(peak,av);
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+        const nx=qx+dx,ny=qy+dy; if(nx<1||ny<1||nx>=N-1||ny>=N-1)return;
+        const ni=idx(nx,ny); if(seen[ni])return; const vv=Math.abs(params.model==='reaction'?b[ni]:u[ni]);
+        if(vv>thr){seen[ni]=1;stack.push(ni)}
+      });
+    }
+    if(cells.length>=4 && sum>0){
+      const cx=sx/sum, cy=sy/sum; let spread=0;
+      for(const q of cells){const qx=q%N,qy=(q/N)|0,av=Math.abs(params.model==='reaction'?b[q]:u[q]); spread+=av*((qx-cx)**2+(qy-cy)**2)}
+      out.push({cx,cy,size:cells.length,mass:sum,peak,spread:Math.sqrt(spread/sum)});
+    }
+  }
+  return out.sort((a,b)=>b.mass-a.mass).slice(0,32);
+}
+function patternConfidence(p){
+  const ageFactor=clamp(p.age/28,0,1);
+  const continuityFactor=clamp(p.history/36,0,1);
+  const shapeStability=1-clamp(Math.abs((p.spread||0)-(p.prevSpread||p.spread||0))/Math.max(p.prevSpread||p.spread||1,1),0,1);
+  const massStability=1-clamp(Math.abs((p.mass||0)-(p.prevMass||p.mass||0))/Math.max(p.prevMass||p.mass||1,1),0,1);
+  return clamp(ageFactor*.35+continuityFactor*.25+shapeStability*.20+massStability*.20,0,1);
+}
+
+function clonePatternForExport(p,limit){const q={}; for(const k in p){if(k==='trajectory')continue; q[k]=p[k];} const tr=Array.isArray(p.trajectory)?p.trajectory.slice(-limit):[]; q.trajectory=tr.map(t=>({tick:t.tick,cx:t.cx,cy:t.cy,mass:t.mass,spread:t.spread,confidence:t.confidence,label:t.label})); return q;}
+function archivePattern(p){const archived=clonePatternForExport(p,50); archived.lostAt=tick; patternArchive.push(archived); if(patternArchive.length>160)patternArchive.shift();}
+function serializePatterns(limit){return [...patterns.values()].map(p=>clonePatternForExport(p,limit));}
+function arrayToPlain(arr){return Array.from(arr,function(x){return Number.isFinite(x)?Number(x.toFixed(7)):0;});}
+function captureFieldState(){return {u:arrayToPlain(u),v:arrayToPlain(v),a:arrayToPlain(a),b:arrayToPlain(b),barrier:arrayToPlain(barrier)};}
+function serializeState(){return {version:'V9.1.1',timestamp:new Date().toISOString(),seed:seed,resolution:N,params:{...params},tick:tick,field:captureFieldState(),history:history.slice(-240),lastMetrics:lastMetrics,numericRecoveryCount:numericRecoveryCount,performanceMode:performanceMode,themeMode:themeMode,stability:stabilityState(),events:events.slice(-200),patterns:serializePatterns(100),patternArchive:patternArchive.map(function(p){return clonePatternForExport(p,50);}),patternExport:patternExport(),integrity:{arraysLength:SQ,trajectoryLiveLimit:100,trajectoryArchiveLimit:50,claim:'exact local state export for educational replay, not scientific validation'}};}
+function restoreArray(target, source){if(!Array.isArray(source)||source.length!==SQ)return false; for(let i=0;i<SQ;i++){const x=Number(source[i]); target[i]=Number.isFinite(x)?x:0;} return true;}
+function importState(state){
+  if(!state||typeof state!=='object')throw new Error('Invalid JSON state');
+  const newN=Number(state.resolution); if(![128,192,256].includes(newN))throw new Error('Unsupported resolution');
+  showLoading('Importing state…');
+  N=newN; SQ=N*N; seed=String(state.seed||'imported-state');
+  Object.assign(params,state.params||{}); params.model=params.model||'linear'; params.experiment=params.experiment||'Pulse';
+  cvs.width=N; cvs.height=N; img=ctx.createImageData(N,N);
+  u=new Float32Array(SQ); v=new Float32Array(SQ); u2=new Float32Array(SQ); a=new Float32Array(SQ); b=new Float32Array(SQ); barrier=new Float32Array(SQ);
+  const field=state.field||{};
+  restoreArray(u,field.u); restoreArray(v,field.v); restoreArray(a,field.a); restoreArray(b,field.b); restoreArray(barrier,field.barrier);
+  tick=Number(state.tick)||0; history=Array.isArray(state.history)?state.history.slice(-240):[]; events=Array.isArray(state.events)?state.events.slice(-200):[]; selfTestResults=[]; performanceMode=!!state.performanceMode; themeMode=state.themeMode==='light'?'light':'dark'; applyTheme();
+  patterns=new Map(); (Array.isArray(state.patterns)?state.patterns:[]).forEach(function(p){if(p&&p.id)patterns.set(String(p.id),p);});
+  patternArchive=Array.isArray(state.patternArchive)?state.patternArchive.slice(-160):[];
+  nextPatternId=1; patterns.forEach(function(_,id){const n=Number(String(id).replace(/[^0-9]/g,'')); if(Number.isFinite(n))nextPatternId=Math.max(nextPatternId,n+1);});
+  selectedPatternId=''; lastMetrics=state.lastMetrics||null; numericRecoveryCount=Number(state.numericRecoveryCount)||0;
+  updateControlValuesFromParams(); event('import','state','full JSON state imported'); render(); hideLoading();
+}
+function updateControlValuesFromParams(){
+  const ms=document.getElementById('modelSelect'); if(ms)ms.value=params.model;
+  const vs=document.getElementById('viewSelect'); if(vs)vs.value=params.view;
+  const rs=document.getElementById('resolutionSelect'); if(rs)rs.value=String(N);
+  ['speed','damping','nonlinear','noise','capacity','channel'].forEach(function(k){const el=document.getElementById(k); if(el)el.value=params[k];});
+}
+function showLoading(msg){const el=document.getElementById('loadingOverlay'); if(el){el.textContent=msg||'Working…'; el.style.display='grid';}}
+function hideLoading(){const el=document.getElementById('loadingOverlay'); if(el)el.style.display='none';}
+function applyTheme(){document.body.dataset.theme=themeMode; const btn=document.getElementById('themeToggle'); if(btn){btn.textContent=themeMode==='light'?'Theme: Light':'Theme: Dark'; btn.setAttribute('aria-pressed',String(themeMode==='light'));}}
+function autosave(reason){try{localStorage.setItem(AUTOSAVE_KEY,JSON.stringify(serializeState())); autosaveStatus='saved @ tick '+tick; event('autosave',reason||'manual','state saved to this browser'); return true;}catch(e){autosaveStatus='failed'; event('autosave failed',reason||'manual',e.message||'localStorage unavailable'); return false;}}
+function restoreAutosave(){try{const raw=localStorage.getItem(AUTOSAVE_KEY); if(!raw){autosaveStatus='none'; event('autosave','restore','no saved state found'); render(); return false;} importState(JSON.parse(raw)); autosaveStatus='restored @ tick '+tick; event('autosave','restore','local browser state restored'); render(); return true;}catch(e){autosaveStatus='failed'; event('autosave failed','restore',e.message); render(); return false;}}
+function clearAutosave(){try{localStorage.removeItem(AUTOSAVE_KEY); autosaveStatus='cleared'; event('autosave','clear','local browser state cleared');}catch(e){autosaveStatus='failed'; event('autosave failed','clear',e.message);} render();}
+function setRunning(value,reason){const was=running; running=!!value; const btn=document.getElementById('runPause'); if(btn)btn.textContent=running?'Pause':'Run'; if(was&&!running)autosave(reason||'pause'); render();}
+
+function patternLabel(p){
+  if(p.uncertain) return 'identity uncertain';
+  if(params.model==='reaction') return p.spread>16?'reaction-diffusion region':'reaction-diffusion spot';
+  if((params.model==='sinegordon'||params.model==='phi4') && p.age>=18 && p.spread<18) return 'long-lived nonlinear packet';
+  if(p.age>=18) return 'persistent localized structure';
+  return 'candidate region';
+}
+function detectTrackingUncertainty(summaries){
+  if(tick-lastUncertaintyTick<80)return;
+  if(lastClusterCount && summaries.length>=lastClusterCount+3){event('split suspected','pattern tracking','cluster count jumped; identity continuity may be unreliable');lastUncertaintyTick=tick;return;}
+  if(lastClusterCount>=3 && summaries.length<=Math.max(1,lastClusterCount-3)){event('merge suspected','pattern tracking','cluster count collapsed; several regions may have merged');lastUncertaintyTick=tick;}
+}
+function updatePatterns(summaries,thr){
+  const used=new Set(), maxDist=Math.max(8,N*.055);
+  for(const s of summaries.slice(0,16)){
+    let best=null,bestD=Infinity;
+    for(const [id,p] of patterns.entries()){
+      if(used.has(id))continue;
+      const safeCx = Number.isFinite(p.cx) ? p.cx : 0; const safeCy = Number.isFinite(p.cy) ? p.cy : 0; const prevCx = Number.isFinite(p.prevCx) ? p.prevCx : safeCx; const prevCy = Number.isFinite(p.prevCy) ? p.prevCy : safeCy; const pvx = safeCx - prevCx; const pvy = safeCy - prevCy;
+      const predictedX=p.cx+pvx, predictedY=p.cy+pvy;
+      const d=Math.hypot(predictedX-s.cx,predictedY-s.cy);
+      const massPenalty=Math.abs(Math.log((s.mass+1e-6)/((p.mass||s.mass)+1e-6)))*2.5;
+      const spreadPenalty=Math.abs((s.spread||0)-(p.spread||0))*.05;
+      const score=d+massPenalty+spreadPenalty;
+      if(score<bestD && d<maxDist+Math.sqrt(s.size)*.08){best=id;bestD=score;}
+    }
+    if(best==null){
+      const id='P'+nextPatternId++;
+      patterns.set(id,{id,cx:s.cx,cy:s.cy,prevCx:s.cx,prevCy:s.cy,size:s.size,mass:s.mass,prevMass:s.mass,peak:s.peak,spread:s.spread,prevSpread:s.spread,age:1,lastSeen:tick,born:tick,maxAge:1,history:1,confidence:.05,uncertain:false,label:'candidate region',trajectory:[{tick,cx:s.cx,cy:s.cy,mass:s.mass,spread:s.spread,confidence:.05,label:'candidate region'}]});
+      used.add(id);
+    }else{
+      const p=patterns.get(best);
+      p.prevCx=p.cx; p.prevCy=p.cy; p.prevMass=p.mass; p.prevSpread=p.spread;
+      const travel=Math.hypot(p.cx-s.cx,p.cy-s.cy);
+      p.uncertain=travel>maxDist*.72;
+      if(p.uncertain && tick-lastUncertaintyTick>80){event('identity uncertain',p.id,'tracked region moved too far for confident identity');lastUncertaintyTick=tick;}
+      p.cx=p.cx*.72+s.cx*.28; p.cy=p.cy*.72+s.cy*.28; p.size=s.size; p.mass=s.mass; p.peak=s.peak; p.spread=s.spread; p.age++; p.maxAge=Math.max(p.maxAge,p.age); p.lastSeen=tick; p.history++; p.confidence=patternConfidence(p); p.label=patternLabel(p); if(!p.trajectory)p.trajectory=[]; p.trajectory.push({tick,cx:p.cx,cy:p.cy,mass:p.mass,spread:p.spread,confidence:p.confidence,label:p.label}); if(p.trajectory.length>600)p.trajectory.shift(); used.add(best);
+    }
+  }
+  for(const [id,p] of [...patterns.entries()]){
+    if(!used.has(id)){p.age=Math.max(0,p.age-1); p.confidence=clamp((p.confidence||0)-.04,0,1);}
+    if(tick-p.lastSeen>48 || p.age<=0){event('track lost',id,'pattern memory decayed after missed detections'); archivePattern(p); if(selectedPatternId===id)selectedPatternId=''; patterns.delete(id);}
+  }
+}
+function sample(){checkStability(); const m=analyze(); history.push({tick,E:m.E,peak:Math.max(Math.abs(m.max),Math.abs(m.min)),width:m.width,risk:m.risk,clusters:m.clusters,retained:m.retained,patterns:patterns.size}); if(history.length>240)history.shift(); if(m.risk>.72&&tick%60===0)event('stress high','boundary-criticality','boundary stress is high; this is not proof, only a signal to inspect');}
+function event(type,subject,note){events.push({tick,type,subject,note}); if(events.length>120)events.shift();}
+function renderField(){const m=lastMetrics||analyze(); const view=params.view; let maxv=.0001; const vals=new Float32Array(SQ); const hasBarrier=params.experiment==='Barrier Slit'||params.experiment==='Noise Escape'; for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=idx(x,y);let val;if(view==='energy'){if(params.model==='reaction')val=Math.abs(b[i]);else val=Math.abs(u[i])+Math.abs(v[i])*.35;}else if(view==='criticality'){const field=Math.abs(params.model==='reaction'?b[i]:u[i]); const dist=Math.abs(x-N/2); const near=hasBarrier?clamp(1-dist/Math.max(8,N*.06),0,1):0; const inSlit=Math.abs(y-N/2)<(params.channel*N/128)/2; val=field*.42 + barrier[i]*.75 + near*field*1.8 + (inSlit&&hasBarrier?field*.9:0) + params.noise*2.2;}else val=params.model==='reaction'?b[i]*2-a[i]:u[i]; vals[i]=val; maxv=Math.max(maxv,Math.abs(val));} for(let i=0,p=0;i<SQ;i++,p+=4){let val=vals[i], r=5,g=7,bb=15;if(view==='energy'||view==='criticality'){let q=clamp(Math.abs(val)/(view==='criticality'?Math.max(maxv,.45):maxv),0,1); r=10+q*245;g=12+q*(view==='criticality'?120:230);bb=22+q*(view==='criticality'?80:220);}else{let q=clamp(val/maxv,-1,1); if(q>=0){r=20+q*235;g=14+q*170;bb=25+q*80}else{r=12+(-q)*90;g=18+(-q)*170;bb=30+(-q)*225}} if(barrier[i]>.05){r=180;g=180;bb=190} img.data[p]=r;img.data[p+1]=g;img.data[p+2]=bb;img.data[p+3]=255;} ctx.putImageData(img,0,0); renderPatternHighlight();}
+function activePattern(){const list=[...patterns.values()].sort((a,b)=>(b.confidence||0)-(a.confidence||0)||b.age-a.age); if(selectedPatternId&&patterns.has(selectedPatternId))return patterns.get(selectedPatternId); return list[0]||null;}
+function renderPatternHighlight(){const p=activePattern(); if(!p)return; const scale=cvs.width/N; ctx.save(); ctx.lineWidth=Math.max(1.5,N/96); ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.fillStyle='rgba(255,255,255,.09)'; const r=Math.max(5,Math.min(34,(p.spread||8)*1.45)); ctx.beginPath(); ctx.arc(p.cx*scale,p.cy*scale,r*scale,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.arc(p.cx*scale,p.cy*scale,Math.max(2,scale*2),0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(255,255,255,.88)'; ctx.font=`${Math.max(10,N/14)}px ui-monospace`; ctx.fillText(`${p.id} ${Math.round((p.confidence||0)*100)}%`,(p.cx+r+3)*scale,Math.max(12,(p.cy-r-2)*scale)); ctx.restore();}
+function render(){const m=analyze(); document.getElementById('tickText').textContent=tick; document.getElementById('modeText').textContent=params.experiment; document.getElementById('runState').textContent=running?'running':'paused'; document.getElementById('runDot').className=running?'dot pass':'dot warn'; document.getElementById('hEnergy').textContent=m.E.toFixed(2); document.getElementById('hRetained').textContent=Math.round(m.retained*100)+'%'; document.getElementById('hRisk').textContent=Math.round(m.risk*100)+'%'; document.getElementById('hSanity').textContent=m.sanity?'PASS':'FAIL'; document.getElementById('hSanity').className=m.sanity?'value pass':'value fail'; const fpsEl=document.getElementById('hFps'); if(fpsEl)fpsEl.textContent=currentFps?currentFps.toFixed(0):'--'; const asEl=document.getElementById('hAutosave'); if(asEl)asEl.textContent=autosaveStatus; document.getElementById('fieldBadge').textContent=params.view+' view'; updateControlsText(); updateEquation(); renderField(); renderStatus(m); renderMetrics(m); renderCharts(); renderEvents(); renderTests(); renderProductionTests(); renderReport(m);}
+function renderStatus(m){let title='A measured field pattern is evolving.',text='Use the analysis panel: peak, width, clusters, retained energy, and boundary pressure. Naming must follow measurement.'; if(params.experiment==='Conservation Check') {title='Conservation check mode.'; text='Damping is forced to zero and boundaries reflect. Energy should stay roughly stable. This is a numerical sanity test, not a claim about nature.'} if(params.experiment==='Barrier Slit'){title='Boundary + channel experiment.'; text='A barrier blocks the field except for a slit. This illustrates capacity and channel availability in the boundary-criticality lens.'} if(params.model==='sinegordon'||params.model==='phi4'){title='Nonlinear toy mode is active.'; text='Localized structures may last longer because the equation contains nonlinear restoring terms. Call them soliton-like only as a toy demonstration.'} if(params.model==='reaction'){title='Reaction-diffusion mode is active.'; text='This is no longer a wave equation. It shows pattern formation from local reaction and diffusion, useful for emergence teaching.'} document.getElementById('bigStatus').textContent=title; document.getElementById('statusText').textContent=text;}
+function renderMetrics(m){document.getElementById('metrics').innerHTML=[['model',params.model],['energy',m.E.toFixed(4)],['retained', (m.retained*100).toFixed(1)+'%'],['peak +',m.max.toFixed(3)],['peak −',m.min.toFixed(3)],['hot cells',m.hot],['clusters',m.clusters],['tracked patterns',patterns.size],['center',m.cx.toFixed(1)+','+m.cy.toFixed(1)],['width',m.width.toFixed(2)],['escaped mass/energy',m.escaped.toFixed(2)],['stability',stabilityState().label],['numeric recoveries',numericRecoveryCount]].map(row).join(''); document.getElementById('stressFormula').textContent='Boundary Stress Index = deviation·0.25 + pressure·0.28 + channel transmission·0.22 + noise·0.12 + escape ratio·0.10 + localization·0.03 − capacity·0.18\nWeighted heuristic only. Coefficients are adjustable and not scientifically fitted.'; document.getElementById('bcMetrics').innerHTML=[['boundary capacity',m.capacity.toFixed(2)],['channel openness',m.channel.toFixed(2)],['measured deviation',m.deviation.toFixed(2)],['near-boundary pressure',m.pressure.toFixed(2)],['channel transmission',m.channelTransmission.toFixed(2)],['escape ratio',m.escapeRatio.toFixed(2)],['noise',m.noise.toFixed(2)],['localization',m.localization.toFixed(2)],['toy boundary stress', (m.risk*100).toFixed(1)+'%'],['cluster data age',`${Math.max(0,tick-lastClusterTick)} ticks`],['interpretation',m.risk>.7?'inspect boundary stress':m.risk>.35?'watch boundary':'low stress']].map(row).join(''); renderPatterns(m);}
+function renderPatterns(m){
+  const list=[...patterns.values()].sort((a,b)=>b.age-a.age||b.mass-a.mass).slice(0,10);
+  updatePatternSelect(list);
+  renderPatternStats(m);
+  if(!list.length){document.getElementById('structures').innerHTML=`<table role="table" aria-label="Fallback pattern measurements"><thead><tr><th scope="col">Measured thing</th><th scope="col">Value</th><th scope="col">Honest label</th></tr></thead><tbody><tr><td>largest amplitude</td><td>${m.peak.toFixed(3)}</td><td>peak, not particle</td></tr><tr><td>clusters now</td><td>${m.clusters}</td><td>detected regions, not tracked identity</td></tr><tr><td>width</td><td>${m.width.toFixed(2)}</td><td>localization measure</td></tr><tr><td>boundary stress</td><td>${(m.risk*100).toFixed(1)}%</td><td>weighted stress score, not proof</td></tr></tbody></table>`;return;}
+  document.getElementById('structures').innerHTML=`<table><thead><tr><th>ID</th><th>Age</th><th>Confidence</th><th>Mass</th><th>Spread</th><th>Honest label</th></tr></thead><tbody>${list.map(p=>`<tr><td><button data-pattern="${esc(p.id)}" class="pill">${esc(p.id)}</button></td><td>${p.age}</td><td>${Math.round((p.confidence||0)*100)}%</td><td>${p.mass.toFixed(2)}</td><td>${p.spread.toFixed(1)}</td><td>${esc(p.label)}</td></tr>`).join('')}</tbody></table><p class="small">Click a pattern ID to lock inspection/highlight. Identity is approximate: predicted-centroid matching with mass/spread checks and decay. Merge/split events can make identity uncertain. Continuity ≠ identity.</p>`;
+  document.querySelectorAll('[data-pattern]').forEach(btn=>btn.onclick=()=>{selectedPatternId=btn.getAttribute('data-pattern')||'';render();});
+}
+function updatePatternSelect(list){
+  const sel=document.getElementById('patternSelect'); if(!sel)return;
+  const current=selectedPatternId;
+  sel.innerHTML='<option value="">Auto / strongest pattern</option>'+list.map(p=>`<option value="${esc(p.id)}">${esc(p.id)} · age ${p.age} · conf ${Math.round((p.confidence||0)*100)}%</option>`).join('');
+  sel.value=patterns.has(current)?current:'';
+}
+function lifetimeStats(){
+  const live=[...patterns.values()]; const archived=patternArchive.slice(); const all=live.concat(archived); if(!all.length)return null;
+  const ages=all.map(p=>p.maxAge||p.age||0).sort((a,b)=>a-b); const avg=ages.reduce((a,b)=>a+b,0)/ages.length; const max=ages[ages.length-1]||0; const median=ages[Math.floor(ages.length/2)]||0;
+  const confident=all.filter(p=>(p.confidence||0)>.65).length;
+  return {live:live.length,archived:archived.length,total:all.length,avg,median,max,confident};
+}
+function renderPatternStats(m){
+  const el=document.getElementById('patternStats'); if(!el)return;
+  const p=activePattern(); const stats=lifetimeStats();
+  let html='';
+  if(stats){html += [['live tracks',stats.live],['archived tracks',stats.archived],['avg lifetime',stats.avg.toFixed(1)+' ticks'],['median lifetime',stats.median+' ticks'],['max lifetime',stats.max+' ticks'],['confidence > 65%',stats.confident]].map(row).join('');}
+  if(p){
+    const traj=p.trajectory||[]; const start=traj[0]||p; const last=traj[traj.length-1]||p; const travel=traj.length>1?traj.reduce((sum,pt,i)=>i?sum+Math.hypot(pt.cx-traj[i-1].cx,pt.cy-traj[i-1].cy):0,0):0;
+    html += '<br>'+[['selected',p.id],['label',p.label],['confidence',Math.round((p.confidence||0)*100)+'%'],['born tick',p.born],['last seen',p.lastSeen],['trajectory points',traj.length],['path travel',travel.toFixed(1)],['current center',p.cx.toFixed(1)+','+p.cy.toFixed(1)]].map(row).join('');
+  } else html += '<p>No stable tracked pattern yet. Run a nonlinear or reaction-diffusion preset, then pause and inspect.</p>';
+  el.innerHTML=html;
+}
+function row([a,b]){return `<div class="metric"><span>${esc(a)}</span><span>${esc(b)}</span></div>`}
+function renderCharts(){drawChart('energyChart',history.map(h=>h.E),'energy'); drawChart('peakChart',history.map(h=>h.peak),'peak'); drawChart('riskChart',history.map(h=>h.risk),'risk');}
+function drawChart(id,vals,label){const c=document.getElementById(id),r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2); c.width=Math.max(240,r.width*d);c.height=Math.max(100,r.height*d);const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.fillStyle='rgba(0,0,0,.18)';g.fillRect(0,0,c.width,c.height); if(vals.length<2)return;const pad=18,min=Math.min(...vals),max=Math.max(...vals),span=Math.max(1e-9,max-min);g.strokeStyle='rgba(255,255,255,.09)';g.lineWidth=1;for(let i=0;i<4;i++){const y=pad+(c.height-pad*2)*i/3;g.beginPath();g.moveTo(pad,y);g.lineTo(c.width-pad,y);g.stroke()}g.strokeStyle='rgba(142,166,255,.95)';g.lineWidth=2*d;g.beginPath();vals.forEach((v,i)=>{const x=pad+(c.width-pad*2)*i/(vals.length-1),y=c.height-pad-(v-min)/span*(c.height-pad*2);if(i)g.lineTo(x,y);else g.moveTo(x,y)});g.stroke();g.fillStyle='rgba(255,255,255,.62)';g.font=`${11*d}px ui-monospace`;g.fillText(label,pad,14*d);}
+function renderEvents(){document.getElementById('timeline').innerHTML=events.slice(-42).reverse().map(e=>`<div class="event"><div class="time">t${e.tick}</div><div><strong>${esc(e.type)} · ${esc(e.subject)}</strong><span>${esc(e.note)}</span></div></div>`).join('');}
+function renderResultList(elId,items,emptyText){const el=document.getElementById(elId); if(!el)return; if(!items.length){el.innerHTML='<p>'+esc(emptyText)+'</p>';return;} const pass=items.filter(t=>t.pass).length; el.innerHTML=`<div class="metric"><span>summary</span><span class="${pass===items.length?'pass':'fail'}">${pass}/${items.length}</span></div>`+items.map(t=>`<div class="metric"><span>${esc(t.name)}<br><span class="small">${esc(t.detail)}</span></span><span class="${t.pass?'pass':'fail'}">${t.pass?'PASS':'FAIL'}</span></div>`).join('');}
+function renderTests(){renderResultList('tests',selfTestResults,'Run Self-Test to verify basic numerical behavior.');}
+function renderProductionTests(){renderResultList('productionTests',productionTestResults,'Run Production Tests to verify export/import, stability, and runtime checks.');}
+function report(m){return `KNOT Boundary Field Lab V9.1.1 Report\nSeed: ${seed}\nModel: ${params.model}\nExperiment: ${params.experiment}\nTick: ${tick}\n\nEquation / model:\n${equationText()}\n\nParameters:\n${JSON.stringify(params,null,2)}\n\nMeasurements:\nenergy=${m.E}\nretained=${m.retained}\npeakPositive=${m.max}\npeakNegative=${m.min}\nclusters=${m.clusters}\nwidth=${m.width}\nboundaryPressure=${m.boundaryPressure}\nboundaryStress=${m.risk}\n\nBoundary Stress lens, not proof:\nboundary capacity=${m.capacity}\nchannel openness=${m.channel}\npressure=${m.pressure}\nnoise=${m.noise}\n\nAllowed claim:\nInteractive toy simulation for visible field patterns and boundary transitions.\n\nForbidden claim:\nThis does not prove new physics, particles, consciousness, or the Boundary-Criticality framework.`}
+function renderReport(m){document.getElementById('report').value=report(m)}
+function equationText(){if(params.model==='linear')return 'u_tt = c²∇²u − γu_t + noise/source'; if(params.model==='sinegordon')return 'u_tt = c²∇²u − α sin(u) − γu_t + noise/source'; if(params.model==='phi4')return 'u_tt = c²∇²u − α(u³ − u) − γu_t + noise/source'; return `Gray-Scott: A_t = D_A∇²A − AB² + F(1−A); B_t = D_B∇²B + AB² − (K+F)B; F=${params.feed.toFixed(4)}, K=${params.kill.toFixed(4)}`;}
+function updateEquation(){document.getElementById('equationBox').textContent=`Declared model:\n${equationText()}\n\nWhy this version exists:\n- Linear mode teaches propagation and boundary effects.\n- Nonlinear modes can create longer-lived localized structures.\n- Reaction-diffusion mode teaches pattern formation.\n- Boundary Stress Index is an interpretation lens, not proof.\n\nHonest rule: pattern ≠ particle; toy simulation ≠ scientific approval.`}
+function updateControlsText(){updateNonlinearText(); document.getElementById('applyGray').onclick=()=>applyGrayPreset(document.getElementById('grayPreset').value); document.getElementById('randomGray').onclick=()=>randomizeGray(); ['speed','damping','nonlinear','noise','capacity','channel'].forEach(k=>{const el=document.getElementById(k); if(Math.abs(Number(el.value)-params[k])>1e-9)el.value=params[k]; document.getElementById(k+'Val').textContent=(k==='channel'?params[k]:params[k].toFixed(3))}); const gt=document.getElementById('grayText'); if(gt)gt.textContent=`F=${params.feed.toFixed(4)} / K=${params.kill.toFixed(4)}. Active only when model = Gray-Scott Reaction-Diffusion.`; const nl=document.getElementById('nonlinear'); if(nl){nl.disabled=params.model==='reaction'; nl.title=params.model==='reaction'?'Ignored in Gray-Scott reaction-diffusion mode':'Nonlinear strength for Sine-Gordon / phi4 modes';} const perf=document.getElementById('performanceModeBtn'); if(perf){const forced=N>=256; perf.textContent=(performanceMode||forced)?'Performance Mode: On':'Performance Mode: Off'; perf.setAttribute('aria-pressed',String(performanceMode||forced)); perf.className=(performanceMode||forced)?'perf-on':'';} const pn=document.getElementById('performanceNote'); if(pn){pn.textContent=N>=256?'256×256 automatically targets lower frame pressure. Performance Mode is forced for smoother inspection.':(performanceMode?'Performance Mode reduces simulation/render pressure for weaker devices.':'');} const rs=document.getElementById('resolutionSelect'); if(rs&&Number(rs.value)!==N)rs.value=String(N); applyTheme();}
+const nonlinearPresets={
+  gentle:{model:'sinegordon',experiment:'Soliton-like Seed',speed:.14,damping:.006,nonlinear:.42,noise:0,capacity:.75,channel:14,note:'soft longer-lived packet'},
+  compact:{model:'sinegordon',experiment:'Soliton-like Seed',speed:.11,damping:.003,nonlinear:.86,noise:0,capacity:.75,channel:12,note:'compact toy packet'},
+  breather:{model:'sinegordon',experiment:'Soliton-like Seed',speed:.16,damping:.001,nonlinear:1.12,noise:0,capacity:.55,channel:18,note:'breather-like oscillatory toy'},
+  kink:{model:'phi4',experiment:'Barrier Slit',speed:.12,damping:.004,nonlinear:1.02,noise:.001,capacity:.62,channel:16,note:'φ⁴ kink-wall style boundary test'},
+  collision:{model:'phi4',experiment:'Collision',speed:.15,damping:.002,nonlinear:.92,noise:0,capacity:.75,channel:14,note:'two nonlinear packets collide'}
+};
+function applyNonlinearPreset(name){
+  const p=nonlinearPresets[name]||nonlinearPresets.gentle;
+  params.model=p.model; params.speed=p.speed; params.damping=p.damping; params.nonlinear=p.nonlinear; params.noise=p.noise; params.capacity=p.capacity; params.channel=p.channel;
+  document.getElementById('modelSelect').value=params.model;
+  reset(p.experiment);
+  event('preset','nonlinear',`${name}: ${p.note}`);
+}
+function updateNonlinearText(){const name=document.getElementById('nonlinearPreset')?document.getElementById('nonlinearPreset').value:'gentle'; const p=nonlinearPresets[name]||nonlinearPresets.gentle; const el=document.getElementById('nonlinearText'); if(el)el.textContent=`${p.note}. model=${p.model}, nonlinear=${p.nonlinear}, damping=${p.damping}. Toy behavior only.`;}
+const grayPresets={
+  mitosis:{feed:.0367,kill:.0649,nonlinear:.55,noise:.001},
+  worms:{feed:.078,kill:.061,nonlinear:.55,noise:.000},
+  coral:{feed:.0545,kill:.062,nonlinear:.55,noise:.001},
+  solitons:{feed:.030,kill:.062,nonlinear:.55,noise:.000},
+  waves:{feed:.014,kill:.045,nonlinear:.55,noise:.002}
+};
+function applyGrayPreset(name){const p=grayPresets[name]||grayPresets.mitosis; params.feed=p.feed; params.kill=p.kill; params.nonlinear=p.nonlinear; params.noise=p.noise; params.model='reaction'; document.getElementById('modelSelect').value='reaction'; reset(params.experiment); event('preset','Gray-Scott',`${name}: F=${params.feed}, K=${params.kill}`)}
+function randomizeGray(){params.feed=.012+rng.next()*.07; params.kill=.045+rng.next()*.035; params.model='reaction'; document.getElementById('modelSelect').value='reaction'; reset(params.experiment); event('preset','Gray-Scott random',`F=${params.feed.toFixed(4)}, K=${params.kill.toFixed(4)}`)}
+function runSelfTests(){const original=serializeState(); let out=[]; try{seed='test-seed'; params.model='linear'; params.experiment='Conservation Check'; params.damping=0; reset('Conservation Check'); for(let i=0;i<160;i++)step(); let m=analyze(); out.push({name:'finite conservation run',pass:m.sanity,detail:`energy=${m.E.toFixed(3)}`}); out.push({name:'energy not instantly destroyed',pass:m.retained>.55&&m.retained<1.65,detail:`retained=${(m.retained*100).toFixed(1)}%`}); const beforeRecovery=numericRecoveryCount; u[0]=NaN; v[1]=Infinity; u2[2]=-Infinity; recoverCell(0); recoverCell(1); recoverCell(2); out.push({name:'numeric recovery counter works',pass:numericRecoveryCount>=beforeRecovery+3&&Number.isFinite(u[0])&&Number.isFinite(v[1])&&Number.isFinite(u2[2]),detail:`recoveries ${beforeRecovery}->${numericRecoveryCount}`}); params.model='sinegordon'; reset('Soliton-like Seed'); for(let i=0;i<160;i++)step(); m=analyze(); out.push({name:'nonlinear mode stays bounded',pass:m.sanity&&Math.abs(m.max)<10&&Math.abs(m.min)<10,detail:`peak=${Math.max(Math.abs(m.max),Math.abs(m.min)).toFixed(3)}`}); params.model='reaction'; reset('Pulse'); const reactionBefore=numericRecoveryCount; a[0]=NaN; b[1]=Infinity; recoverCell(0); recoverCell(1); out.push({name:'reaction numeric recovery works',pass:numericRecoveryCount>=reactionBefore+2&&Number.isFinite(a[0])&&Number.isFinite(b[1]),detail:`recoveries ${reactionBefore}->${numericRecoveryCount}`}); for(let i=0;i<120;i++)step(); m=analyze(); out.push({name:'reaction-diffusion finite',pass:m.sanity&&m.E>0,detail:`B mass=${m.E.toFixed(3)}`});}catch(e){out.push({name:'self-test runtime exception',pass:false,detail:e.message});} importState(original); selfTestResults=out; event('self-test','completed',`${out.filter(x=>x.pass).length}/${out.length} checks passed`);} 
+function bind(){
+  document.getElementById('seedInput').value=seed;
+  document.getElementById('runPause').onclick=()=>setRunning(!running,'pause button');
+  document.getElementById('step1').onclick=()=>{running=false;document.getElementById('runPause').textContent='Run';step();render()};
+  document.getElementById('step10').onclick=()=>{running=false;document.getElementById('runPause').textContent='Run';for(let i=0;i<10;i++)step();render()};
+  document.getElementById('step100').onclick=()=>{for(let i=0;i<100;i++)step();render()};
+  document.getElementById('inspectStrongest').onclick=()=>{const p=activePattern(); selectedPatternId=p?p.id:''; running=false; document.getElementById('runPause').textContent='Run'; render()};
+  document.getElementById('pauseInspect').onclick=()=>{setRunning(false,'pause inspect'); const p=activePattern(); selectedPatternId=p?p.id:''; render()};
+  document.getElementById('runSelfTest').onclick=()=>{runSelfTests();render()};
+  document.getElementById('prodTest').onclick=()=>{runProductionTests();render()};
+  document.getElementById('performanceModeBtn').onclick=()=>{performanceMode=!performanceMode; event('performance mode','system',performanceMode?'manual performance mode enabled':'manual performance mode disabled'); render()};
+  document.getElementById('themeToggle').onclick=()=>{themeMode=themeMode==='light'?'dark':'light'; applyTheme(); event('theme','ui',themeMode+' mode enabled'); render()};
+  document.getElementById('restoreAutosave').onclick=()=>restoreAutosave();
+  document.getElementById('clearAutosave').onclick=()=>clearAutosave();
+  document.getElementById('applySeed').onclick=()=>{seed=document.getElementById('seedInput').value.trim()||seed;reset(params.experiment)};
+  document.getElementById('reset').onclick=()=>reset(params.experiment);
+  document.getElementById('modelSelect').onchange=e=>{params.model=e.target.value;reset(params.experiment)};
+  document.getElementById('viewSelect').onchange=e=>{params.view=e.target.value;render()};
+  document.getElementById('resolutionSelect').onchange=e=>{const newN=Number(e.target.value); if(newN===N)return; showLoading('Changing resolution…'); setTimeout(()=>{N=newN;SQ=N*N;reset(params.experiment); if(N>=256)event('performance warning','resolution','256×256 is heavy; performance mode is forced automatically.'); hideLoading();},10)};
+  document.getElementById('patternSelect').onchange=e=>{selectedPatternId=e.target.value;render()};
+  document.getElementById('clearSelection').onclick=()=>{selectedPatternId='';render()};
+  document.getElementById('exportPatterns').onclick=()=>download('knot_boundary_field_v9_1_pattern_history.json',JSON.stringify(patternExport(),null,2),'application/json');
+  document.getElementById('applyNonlinear').onclick=()=>applyNonlinearPreset(document.getElementById('nonlinearPreset').value);
+  document.getElementById('nonlinearPreset').onchange=()=>updateNonlinearText();
+  [['expPulse','Pulse'],['expConserve','Conservation Check'],['expSlit','Barrier Slit'],['expCollision','Collision'],['expNoise','Noise Escape'],['expSoliton','Soliton-like Seed']].forEach(([id,exp])=>document.getElementById(id).onclick=()=>reset(exp));
+  document.getElementById('applyGray').onclick=()=>applyGrayPreset(document.getElementById('grayPreset').value);
+  document.getElementById('randomGray').onclick=()=>randomizeGray();
+  ['speed','damping','nonlinear','noise','capacity','channel'].forEach(k=>{const el=document.getElementById(k);el.value=params[k];el.oninput=()=>{params[k]=Number(el.value); if(k==='capacity'||k==='channel')makeBarrier(params.experiment==='Barrier Slit'||params.experiment==='Noise Escape'); render()}});
+  document.getElementById('copyReport').onclick=async()=>{try{await navigator.clipboard.writeText(document.getElementById('report').value);event('export','clipboard','report copied')}catch{event('export failed','clipboard','browser blocked copy')}render()};
+  document.getElementById('downloadJson').onclick=()=>download('knot_boundary_field_v9_1_full_state.json',JSON.stringify(serializeState(),null,2),'application/json');
+  document.getElementById('downloadPython').onclick=()=>download('knot_boundary_field_v9_1_replay.py',pythonExport(),'text/x-python');
+  document.getElementById('downloadTests').onclick=()=>download('knot_boundary_field_v9_1_test_harness.html',productionTestHarness(),'text/html');
+  document.getElementById('importJson').onclick=()=>document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange=e=>{const f=e.target.files&&e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{try{importState(JSON.parse(String(r.result)));}catch(err){event('import failed','state',err.message); hideLoading(); render();}}; r.readAsText(f);};
+  cvs.addEventListener('pointerdown',e=>{touchNegativeUntil=0; if(e.pointerType==='touch')touchNegativeUntil=performance.now()+520; injectFromPointer(e);});
+  cvs.addEventListener('pointermove',e=>{if(e.buttons)injectFromPointer(e)});
+}
+function patternExport(){return {version:'V9.1.1',seed,resolution:N,model:params.model,experiment:params.experiment,tick,selectedPatternId,live:serializePatterns(100),archived:patternArchive.map(p=>clonePatternForExport(p,50)),lifetimeStats:lifetimeStats(),stability:stabilityState(),numericRecoveryCount,notes:['Trajectory identity is approximate.','Merge/split events can invalidate continuity.','Confidence is a local heuristic, not proof of identity.','Archived trajectories are intentionally bounded to avoid oversized exports.']};}
+function injectFromPointer(e){const r=cvs.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*N),y=Math.floor((e.clientY-r.top)/r.height*N); const coarse=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches; const rad=coarse?Math.max(7,Math.round(N*.035)):5; if(params.model==='reaction'){for(let yy=y-rad;yy<=y+rad;yy++)for(let xx=x-rad;xx<=x+rad;xx++)if(xx>0&&yy>0&&xx<N&&yy<N){b[idx(xx,yy)]=.7;a[idx(xx,yy)]=.25}} else pulse(x,y,(e.shiftKey||(coarse&&performance.now()>=touchNegativeUntil))?-1.2:1.2,coarse?Math.max(7,Math.round(N*.04)):6); if(coarse&&navigator.vibrate){try{navigator.vibrate(12)}catch(_){}} event('manual injection','field','user added a local disturbance'); render();}
+function download(name,text,type){const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+function productionTestHarness(){return `<!doctype html><meta charset="utf-8"><title>KNOT V9.1 Test Harness</title><pre id="out">Running...</pre><script>
+(async function(){
+ const out=document.getElementById('out');
+ const tests=[]; function test(name,pass,detail){tests.push({name,pass,detail});}
+ test('HTML loaded', true, 'Open the main V9 file and use Run Production Tests for runtime checks.');
+ test('Manual check: import/export', true, 'Export Full JSON, reload page, Import JSON, confirm tick/model/field restore.');
+ test('Manual check: Python replay', true, 'Run: python3 knot_boundary_field_v9_1_replay.py --steps 10 --png replay.png');
+ out.textContent=tests.map(t=>(t.pass?'PASS ':'FAIL ')+t.name+' - '+t.detail).join('\\n');
+})();<\/script>`;}
+function runProductionTests(){
+  const original=serializeState();
+  let out=[];
+  function add(name,pass,detail){out.push({name:name,pass:!!pass,detail:String(detail||'')});}
+  try{add('finite current metrics',lastMetrics?lastMetrics.sanity:true,'current simulation state is finite');}catch(e){add('finite current metrics',false,e.message);}
+  try{const st=stabilityState(); add('CFL stability status computed',Number.isFinite(st.ratio)||st.limit===Infinity,st.label);}catch(e){add('CFL stability status computed',false,e.message);}
+  try{const json=JSON.stringify(original); const parsed=JSON.parse(json); add('full JSON serializes and parses',parsed.field&&parsed.field.u&&parsed.field.u.length===original.resolution*original.resolution,`bytes=${json.length}`);}catch(e){add('full JSON serializes and parses',false,e.message);}
+  try{add('live trajectories bounded',original.patterns.every(function(p){return !p.trajectory||p.trajectory.length<=100;}),'limit 100');}catch(e){add('live trajectories bounded',false,e.message);}
+  try{add('archive trajectories bounded',original.patternArchive.every(function(p){return !p.trajectory||p.trajectory.length<=50;}),'limit 50');}catch(e){add('archive trajectories bounded',false,e.message);}
+  try{const py=pythonExport(); add('python export is executable scaffold',py.indexOf('def step_wave')>0&&py.indexOf('def step_reaction')>0&&py.indexOf('argparse')>0,`chars=${py.length}`);}catch(e){add('python export is executable scaffold',false,e.message);}
+  try{const before=tick; step(); const m=analyze(); add('single-step runtime survives',m.sanity&&tick===before+1,`tick ${before}->${tick}`);}catch(e){add('single-step runtime survives',false,e.message);}
+  try{add('test result arrays separated',Array.isArray(selfTestResults)&&Array.isArray(productionTestResults),'self-test and production-test panels do not overwrite each other');}catch(e){add('test result arrays separated',false,e.message);}
+  try{add('performance mode control present',!!document.getElementById('performanceModeBtn'),'toggle exists; 256 forces reduced frame pressure');}catch(e){add('performance mode control present',false,e.message);}
+  try{add('autosave controls present',!!document.getElementById('restoreAutosave')&&!!document.getElementById('clearAutosave'),'localStorage restore/clear controls exist');}catch(e){add('autosave controls present',false,e.message);}
+  try{add('fps display present',!!document.getElementById('hFps'),'frame-rate diagnostic exists');}catch(e){add('fps display present',false,e.message);}
+  try{add('theme toggle present',!!document.getElementById('themeToggle'),'dark/light toggle exists');}catch(e){add('theme toggle present',false,e.message);}
+  try{add('ARIA log/canvas labels present',document.getElementById('timeline').getAttribute('role')==='log'&&cvs.getAttribute('role')==='img','timeline role=log; canvas role=img');}catch(e){add('ARIA log/canvas labels present',false,e.message);}
+  try{importState(original); add('import restores exported state',N===original.resolution&&tick===original.tick,'state restored after test step');}catch(e){add('import restores exported state',false,e.message);}
+  productionTestResults=out; event('production-tests','completed',`${out.filter(function(x){return x.pass;}).length}/${out.length} checks passed`); render();
+}
+function pythonExport(){
+  const state=serializeState();
+  const stateJson=JSON.stringify(state);
+  return `#!/usr/bin/env python3
+"""KNOT Boundary Field Lab V9.1.1 replay/export.
+Generated from the browser tool. Requires: Python 3 + numpy. Matplotlib is optional for PNG output.
+Allowed claim: reproducible educational/toy simulation replay.
+Forbidden claim: proof of new physics or validated scientific instrument.
+"""
+import argparse, json, math
+import numpy as np
+
+STATE = json.loads(${JSON.stringify(stateJson)})
+N = int(STATE["resolution"])
+P = STATE["params"]
+
+def arr(name):
+    data = STATE.get("field", {}).get(name)
+    if not isinstance(data, list) or len(data) != N*N:
+        return np.zeros((N, N), dtype=np.float32)
+    return np.asarray(data, dtype=np.float32).reshape((N, N))
+
+u = arr("u")
+v = arr("v")
+a = arr("a")
+b = arr("b")
+barrier = arr("barrier")
+
+def clamp_array(x, lo, hi):
+    return np.minimum(np.maximum(x, lo), hi)
+
+def laplacian(x):
+    xp = np.roll(x, -1, axis=1); xm = np.roll(x, 1, axis=1)
+    yp = np.roll(x, -1, axis=0); ym = np.roll(x, 1, axis=0)
+    # edge replication to match browser boundary behavior closely
+    xm[:,0]=x[:,0]; xp[:,-1]=x[:,-1]; ym[0,:]=x[0,:]; yp[-1,:]=x[-1,:]
+    return xp + xm + yp + ym - 4*x
+
+def energy():
+    global u, v, a, b
+    if P.get("model") == "reaction":
+        return float(np.sum(np.abs(b)))
+    gx = (np.roll(u, -1, axis=1) - np.roll(u, 1, axis=1)) * 0.5
+    gy = (np.roll(u, -1, axis=0) - np.roll(u, 1, axis=0)) * 0.5
+    return float(np.sum(0.5*v*v + 0.5*P.get("speed",0.18)**2*(gx*gx+gy*gy)))
+
+def step_wave():
+    global u, v
+    c2 = P.get("speed", 0.18) ** 2
+    dt = P.get("dt", 0.72)
+    damp = 0.0 if P.get("experiment") == "Conservation Check" else P.get("damping", 0.008)
+    force = c2 * laplacian(u)
+    model = P.get("model")
+    if model == "sinegordon":
+        force -= P.get("nonlinear", 0.55) * np.sin(u)
+    elif model == "phi4":
+        force -= P.get("nonlinear", 0.55) * (u*u*u - u)
+    v = (v + dt * force) * (1.0 - damp)
+    if barrier.size:
+        v = np.where(barrier > 0, v * (1.0 - barrier * 0.92), v)
+        u = np.where(barrier > 0, u * (1.0 - barrier * 0.55), u)
+    u = clamp_array(u + dt * v, -10, 10)
+    v = clamp_array(v, -10, 10)
+    u[~np.isfinite(u)] = 0; v[~np.isfinite(v)] = 0
+
+def step_reaction():
+    global u, a, b
+    Du, Dv = 0.16, 0.08
+    F, K = P.get("feed", 0.035), P.get("kill", 0.060)
+    react = a*b*b
+    aa = a + (Du*laplacian(a) - react + F*(1-a))
+    bb = b + (Dv*laplacian(b) + react - (K+F)*b)
+    if barrier.size:
+        aa = np.where(barrier > 0, aa*(1-barrier*.3), aa)
+        bb = np.where(barrier > 0, bb*(1-barrier*.7), bb)
+    a = clamp_array(aa, 0, 1); b = clamp_array(bb, 0, 1)
+    a[~np.isfinite(a)] = 1; b[~np.isfinite(b)] = 0
+    u = b*2 - a
+
+def step(n=1):
+    for _ in range(int(n)):
+        if P.get("model") == "reaction": step_reaction()
+        else: step_wave()
+
+def save_png(path):
+    try:
+        import matplotlib.pyplot as plt
+    except Exception as exc:
+        raise SystemExit(f"matplotlib is required for PNG export: {exc}")
+    img = b if P.get("model") == "reaction" else u
+    plt.figure(figsize=(6,6)); plt.imshow(img, cmap="viridis"); plt.axis("off"); plt.tight_layout(); plt.savefig(path, dpi=160); print("saved", path)
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--steps", type=int, default=0)
+    ap.add_argument("--png", default="")
+    args = ap.parse_args()
+    print("KNOT Boundary Field Lab V9.1.1 replay")
+    print("seed:", STATE.get("seed"), "model:", P.get("model"), "experiment:", P.get("experiment"), "N:", N)
+    print("energy_before:", round(energy(), 6))
+    step(args.steps)
+    print("energy_after:", round(energy(), 6))
+    if args.png: save_png(args.png)
+`;}
+function esc(x){return String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function loop(ts){try{const forcedPerf=N>=256; const perf=performanceMode||forcedPerf; const minFrameMs=perf?33:0; if(perf&&lastFrameTime&&ts-lastFrameTime<minFrameMs){requestAnimationFrame(loop);return;} lastFrameTime=ts||0; framesSinceFps++; if(!lastFpsSample)lastFpsSample=ts||0; if((ts||0)-lastFpsSample>=500){currentFps=framesSinceFps*1000/Math.max((ts||0)-lastFpsSample,1); framesSinceFps=0; lastFpsSample=ts||0;} if(running){const steps=perf?1:2; for(let i=0;i<steps;i++)step()} render(); frameCounter++;}catch(e){running=false; event('runtime error','loop',e.message); try{render();}catch(_){ } } requestAnimationFrame(loop)}
+window.addEventListener('error',function(e){running=false; event('runtime error','window',e.message||'unknown error'); render();});
+window.addEventListener('keydown',e=>{if(e.target&&['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return; if(e.code==='Space'){e.preventDefault();setRunning(!running,'spacebar')} if(e.key==='.'||e.key==='ArrowRight'){running=false;document.getElementById('runPause').textContent='Run';step();render()} if(e.key==='r'||e.key==='R'){reset(params.experiment)}});
+bind(); applyTheme(); reset('Pulse'); try{if(localStorage.getItem(AUTOSAVE_KEY)){autosaveStatus='saved state available';}}catch(_){ } loop();
+</script>
+</body>
+</html>

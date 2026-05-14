@@ -1,0 +1,13 @@
+{
+  "name": "knot-boundary-field-lab-v9-1",
+  "version": "9.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
