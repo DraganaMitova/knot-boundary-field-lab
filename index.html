@@ -31,6 +31,7 @@
 <h2>Run State</h2>
 <div class="row"><span class="badge"><span id="runDot" class="dot pass"></span><span id="runState">running</span></span><span class="badge">tick: <span id="tickText">0</span></span><span class="badge">experiment: <span id="modeText">Pulse</span></span></div><br>
 <div class="grid3"><button id="runPause" class="primary" aria-label="Pause or resume simulation">Pause</button><button id="step1" aria-label="Step simulation once">Step 1</button><button id="step10" aria-label="Step simulation ten ticks">Step 10</button><button id="step100" aria-label="Step simulation one hundred ticks">Step 100</button><button id="inspectStrongest" aria-label="Pause and inspect strongest pattern">Inspect Strongest</button><button id="performanceModeBtn" aria-pressed="false" aria-label="Toggle performance mode">Performance Mode: Off</button><button id="themeToggle" aria-pressed="false" aria-label="Toggle dark or light theme">Theme: Dark</button><button id="restoreAutosave" aria-label="Restore locally autosaved state">Restore Autosave</button><button id="clearAutosave" aria-label="Clear locally autosaved state">Clear Autosave</button></div><div id="performanceNote" class="perf-note" role="status" aria-live="polite"></div><br>
+<div class="row"><input id="seedInput" type="number" value="101" style="flex:1;min-width:160px" aria-label="Numerical simulation seed"><button id="applySeed">Apply Seed</button></div><br>
 
 <div class="grid4"><div class="stat"><div id="hEnergy" class="value">0</div><div class="label">energy</div></div><div class="stat"><div id="hRetained" class="value">100%</div><div class="label">retained</div></div><div class="stat"><div id="hRisk" class="value">0%</div><div class="label">boundary stress</div></div><div class="stat"><div id="hFps" class="value">--</div><div class="label">fps</div></div><div class="stat"><div id="hAutosave" class="value">none</div><div class="label">local autosave</div></div></div>
 </div>
@@ -65,7 +66,7 @@
 'use strict';
 let N=128; let SQ=N*N;
 const params={model:'linear',view:'field',speed:.18,damping:.008,nonlinear:.55,noise:0,capacity:.75,channel:14,dt:.72,experiment:'Pulse',feed:.035,kill:.060};
-let seed='knot-boundary-production'; let rng; let u,v,u2,a,b,barrier,history=[],events=[],running=true,tick=0,initialEnergy=0,lastMetrics=null,patterns=new Map(),nextPatternId=1,lastClusterSummaries=[],lastClusterTick=-999,lastClusterCount=0,lastUncertaintyTick=-999,selectedPatternId='',patternArchive=[],numericRecoveryCount=0,lastStabilityWarningTick=-999,performanceMode=false,frameCounter=0,lastFrameTime=0,currentFps=0,lastFpsSample=0,framesSinceFps=0,autosaveStatus='none',touchNegativeUntil=0,themeMode='dark';
+let seed='101'; let rng; let u,v,u2,a,b,barrier,history=[],events=[],running=true,tick=0,initialEnergy=0,lastMetrics=null,patterns=new Map(),nextPatternId=1,lastClusterSummaries=[],lastClusterTick=-999,lastClusterCount=0,lastUncertaintyTick=-999,selectedPatternId='',patternArchive=[],numericRecoveryCount=0,lastStabilityWarningTick=-999,performanceMode=false,frameCounter=0,lastFrameTime=0,currentFps=0,lastFpsSample=0,framesSinceFps=0,autosaveStatus='none',touchNegativeUntil=0,themeMode='dark';
 const AUTOSAVE_KEY='knot_boundary_field_lab_v9_1_autosave';
 const cvs=document.getElementById('fieldCanvas'),ctx=cvs.getContext('2d'); let img=ctx.createImageData(N,N);
 function hash(s){let h=1779033703^s.length; for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19;} return h>>>0}
@@ -345,6 +346,7 @@ function applyGrayPreset(name){const p=grayPresets[name]||grayPresets.mitosis; p
 function randomizeGray(){params.feed=.012+rng.next()*.07; params.kill=.045+rng.next()*.035; params.model='reaction'; document.getElementById('modelSelect').value='reaction'; reset(params.experiment); event('preset','Gray-Scott random',`F=${params.feed.toFixed(4)}, K=${params.kill.toFixed(4)}`)}
 
 function bind(){
+  document.getElementById('seedInput').value=seed;
   document.getElementById('runPause').onclick=()=>setRunning(!running,'pause button');
   document.getElementById('step1').onclick=()=>{running=false;document.getElementById('runPause').textContent='Run';step();render()};
   document.getElementById('step10').onclick=()=>{running=false;document.getElementById('runPause').textContent='Run';for(let i=0;i<10;i++)step();render()};
@@ -355,6 +357,7 @@ function bind(){
   document.getElementById('themeToggle').onclick=()=>{themeMode=themeMode==='light'?'dark':'light'; applyTheme(); event('theme','ui',themeMode+' mode enabled'); render()};
   document.getElementById('restoreAutosave').onclick=()=>restoreAutosave();
   document.getElementById('clearAutosave').onclick=()=>clearAutosave();
+  document.getElementById('applySeed').onclick=()=>{seed=document.getElementById('seedInput').value.trim()||seed;reset(params.experiment)};
 
   document.getElementById('reset').onclick=()=>reset(params.experiment);
   document.getElementById('modelSelect').onchange=e=>{params.model=e.target.value;reset(params.experiment)};
